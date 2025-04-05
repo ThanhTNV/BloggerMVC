@@ -1,0 +1,53 @@
+﻿@model Blogger.Application.Models.BlogViewModel
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Blog" asp-action="Index">Blogs</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.BlogTitle</li>
+                </ol>
+            </nav>
+
+            <article class="blog-post">
+                <header class="blog-post-header">
+                    <h1 class="blog-post-title">@Model.BlogTitle</h1>
+                    <p class="blog-post-meta text-muted">
+                        Published on @Model.CreatedAt.ToString("MMMM dd, yyyy")
+                    </p>
+                </header>
+
+                @if (!string.IsNullOrEmpty(Model.BlogSummary))
+                {
+                    <div class="blog-summary mb-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Summary</h5>
+                                <p class="card-text">@Model.BlogSummary</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="blog-content">
+                    @Html.Raw(Model.Content)
+                </div>
+
+                <div class="my-4">
+                    <a asp-controller="Blog" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Blogs
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // You can add any blog-specific scripts here
+        // For example, syntax highlighting for code blocks, image zooming, etc.
+    </script>
+}

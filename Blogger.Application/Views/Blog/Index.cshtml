@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Blogger.Application.Models.BlogViewModel>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Blog Posts</h1>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    No blog posts available.
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var blog in Model)
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">@blog.BlogTitle</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">@blog.CreatedAt.ToString("MMMM dd, yyyy")</h6>
+
+                                    @if (!string.IsNullOrEmpty(blog.BlogSummary))
+                                    {
+                                        <p class="card-text">@blog.BlogSummary</p>
+                                    }
+
+                                    <a asp-controller="Blog" asp-action="Details" asp-route-id="@blog.BlogId" class="btn btn-primary">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
