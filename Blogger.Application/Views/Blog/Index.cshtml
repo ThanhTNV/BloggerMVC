@@ -1,39 +1,112 @@
-﻿@model IEnumerable<Blogger.Application.Models.BlogViewModel>
+﻿@using Blogger.Application.Models.BlogViewModels
+@model BlogIndexViewModel
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
+    <div class="row mb-4">
+        <div class="col-md-8">
             <h1>Blog Posts</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-controller="Blog" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Post
+            </a>
+        </div>
+    </div>
 
-            @if (!Model.Any())
+    @if (!Model.Blogs.Any())
+    {
+        <div class="alert alert-info">
+            No blog posts available.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var blog in Model.Blogs)
             {
-                <div class="alert alert-info">
-                    No blog posts available.
-                </div>
-            }
-            else
-            {
-                <div class="row">
-                    @foreach (var blog in Model)
-                    {
-                        <div class="col-md-6 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">@blog.BlogTitle</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">@blog.CreatedAt.ToString("MMMM dd, yyyy")</h6>
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@blog.BlogTitle</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@blog.CreatedAt.ToString("MMMM dd, yyyy")</h6>
 
-                                    @if (!string.IsNullOrEmpty(blog.BlogSummary))
-                                    {
-                                        <p class="card-text">@blog.BlogSummary</p>
-                                    }
-
-                                    <a asp-controller="Blog" asp-action="Details" asp-route-id="@blog.BlogId" class="btn btn-primary">Read More</a>
-                                </div>
-                            </div>
+                            @if (!string.IsNullOrEmpty(blog.BlogSummary))
+                            {
+                                <p class="card-text">@(blog.BlogSummary.Length > 150 ? blog.BlogSummary.Substring(0, 150) + "..." : blog.BlogSummary)</p>
+                            }
                         </div>
-                    }
+                        <div class="card-footer bg-transparent">
+                            <a asp-controller="Blog" asp-action="Details" asp-route-id="@blog.BlogId" class="btn btn-sm btn-outline-primary">Read More</a>
+                        </div>
+                    </div>
                 </div>
             }
         </div>
-    </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Page -->
+                <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pagination.CurrentPage - 1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Page Numbers -->
+                @{
+                    int startPage = Math.Max(1, Model.Pagination.CurrentPage - 2);
+                    int endPage = Math.Min(Model.Pagination.TotalPages, Model.Pagination.CurrentPage + 2);
+
+                    // Always show first page
+                    if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="1">1</a>
+                        </li>
+                        if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                    }
+
+                    // Show page numbers
+                    for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+
+                    // Always show last page
+                    if (endPage < Model.Pagination.TotalPages)
+                    {
+                        if (endPage < Model.Pagination.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="@Model.Pagination.TotalPages">@Model.Pagination.TotalPages</a>
+                        </li>
+                    }
+                }
+
+                <!-- Next Page -->
+                <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.Pagination.CurrentPage + 1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="text-center text-muted mt-2">
+            Showing page @Model.Pagination.CurrentPage of @Model.Pagination.TotalPages
+            (@Model.Pagination.TotalItems total items)
+        </div>
+    }
 </div>

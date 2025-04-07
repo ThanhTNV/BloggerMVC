@@ -1,5 +1,7 @@
 using Blogger.Infrastructure.Constants;
+using Blogger.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Blogger.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<BloggerDbContext>(options
     => options.UseSqlServer(connectionString)
 );
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

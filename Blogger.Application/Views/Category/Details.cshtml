@@ -1,0 +1,54 @@
+﻿@model Blogger.Application.Models.CategoryViewModels.CategoryViewModel
+
+@{
+    ViewData["Title"] = Model.CategoryId > 0 ? "Edit Category" : "Create Category";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>@(Model.CategoryId > 0 ? "Edit Category" : "Create New Category")</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="@(Model.CategoryId > 0 ? "Edit" : "Create")" method="post">
+                <input type="hidden" asp-for="CategoryId" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="CategoryName" class="form-label">Category Name</label>
+                    <input asp-for="CategoryName" class="form-control" required />
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                </div>
+
+                @if (Model.CategoryId > 0)
+                {
+                    <div class="mt-4 mb-3">
+                        <h4>Blogs in this category</h4>
+                        @if (Model.Blogs.Any())
+                        {
+                            <ul class="list-group">
+                                @foreach (var blog in Model.Blogs)
+                                {
+                                    <li class="list-group-item">
+                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@blog.BlogId">
+                                            @blog.BlogTitle
+                                        </a>
+                                        <small class="text-muted d-block">Created: @blog.CreatedAt.ToShortDateString()</small>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No blogs in this category yet.</p>
+                        }
+                    </div>
+                }
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
